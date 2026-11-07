@@ -1,0 +1,13 @@
+{
+  "idle_threshold_seconds": 600,
+  "countdown_seconds": 60,
+  "check_interval_seconds": 3,
+  "vision_verification_enabled": true,
+  "vision_check_duration_seconds": 5,
+  "prevent_shutdown_if_audio_playing": false,
+  "postpone_after_presence_seconds": 300,
+  "graceful_close_wait_seconds": 3,
+  "force_shutdown_after_close": true,
+  "sound_alert_enabled": true,
+  "debug_mode": false
+}
