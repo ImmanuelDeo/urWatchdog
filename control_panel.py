@@ -12,6 +12,7 @@ import psutil
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
 LOG_PATH = os.path.join(BASE_DIR, "daemon.log")
+ICO_PATH = os.path.join(BASE_DIR, "assets", "urwatchdog.ico")
 PYTHONW_EXE = r"C:\Users\deoim\miniconda3\envs\yolo11-ablation\pythonw.exe"
 PYTHON_EXE = r"C:\Users\deoim\miniconda3\envs\yolo11-ablation\python.exe"
 DAEMON_PY = os.path.join(BASE_DIR, "daemon.py")
@@ -52,6 +53,12 @@ class UrWatchdogApp:
         self.root.geometry("640x720")
         self.root.configure(bg="#121214")
         self.root.resizable(False, False)
+
+        if os.path.exists(ICO_PATH):
+            try:
+                self.root.iconbitmap(ICO_PATH)
+            except Exception:
+                pass
 
         # Style definitions
         self.bg_color = "#121214"

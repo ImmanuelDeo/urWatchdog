@@ -51,6 +51,13 @@ def show_countdown_dialog(
     root.attributes("-topmost", True)
     root.resizable(False, False)
 
+    ico_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "urwatchdog.ico")
+    if os.path.exists(ico_path):
+        try:
+            root.iconbitmap(ico_path)
+        except Exception:
+            pass
+
     # Window geometry centered
     width, height = 480, 360
     screen_width = root.winfo_screenwidth()
