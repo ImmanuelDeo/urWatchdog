@@ -1,0 +1,2 @@
+# Isolated install: python -m pip install --target .ui-deps -r requirements-ui.txt
+PySide6-Essentials==6.12.0

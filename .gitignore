@@ -5,3 +5,10 @@ __pycache__/
 daemon.log
 .vscode/
 .idea/
+.ui-deps/
+.ui-backup/
+.ui-validation/
+.vision-venv/
+.runtime-before.json
+runtime_status.json
+daemon.stop

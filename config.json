@@ -1,13 +1,14 @@
 {
   "idle_threshold_seconds": 600,
-  "countdown_seconds": 60,
-  "check_interval_seconds": 3,
-  "vision_verification_enabled": false,
+  "countdown_seconds": 10,
+  "check_interval_seconds": 1,
+  "vision_verification_enabled": true,
   "vision_check_duration_seconds": 5,
   "postpone_after_presence_seconds": 300,
-  "graceful_close_wait_seconds": 3,
-  "force_shutdown_after_close": true,
+  "graceful_close_wait_seconds": 20,
+  "force_shutdown_after_close": false,
   "sound_alert_enabled": true,
   "prevent_shutdown_if_audio_playing": false,
-  "debug_mode": false
+  "debug_mode": false,
+  "continuous_camera_enabled": false
 }

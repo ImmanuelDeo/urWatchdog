@@ -391,9 +391,9 @@ class UrWatchdogApp:
         self.root.after(3000, self.update_loop)
 
 def main():
-    root = tk.Tk()
-    app = UrWatchdogApp(root)
-    root.mainloop()
+    # Preserve existing shortcuts while using the native Acrylic interface.
+    from glass_panel import main as glass_main
+    glass_main()
 
 if __name__ == "__main__":
     main()

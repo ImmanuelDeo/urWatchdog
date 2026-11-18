@@ -12,12 +12,15 @@ def toggle():
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    current = cfg.get("vision_verification_enabled", True)
+    current = cfg.get("continuous_camera_enabled", False)
     new_val = not current
-    cfg["vision_verification_enabled"] = new_val
+    cfg["continuous_camera_enabled"] = new_val
 
-    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, indent=2)
+    from runtime_config import atomic_json
+    atomic_json(CONFIG_PATH,cfg)
+    if new_val:
+        from glass_panel import Backend
+        Backend().start()
 
     status_str = "AKTIF (ON)" if new_val else "NONAKTIF (OFF)"
     print(f"\n[SleepGuard] Status Verifikasi Kamera: {status_str}\n")

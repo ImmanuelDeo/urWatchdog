@@ -16,8 +16,9 @@ class LASTINPUTINFO(ctypes.Structure):
 def get_idle_seconds() -> float:
     lii = LASTINPUTINFO()
     lii.cbSize = ctypes.sizeof(LASTINPUTINFO)
-    ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lii))
-    millis = ctypes.windll.kernel32.GetTickCount() - lii.dwTime
+    if not ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lii)):
+        raise ctypes.WinError()
+    millis = (ctypes.windll.kernel32.GetTickCount() - lii.dwTime) & 0xFFFFFFFF
     return millis / 1000.0
 
 def show_countdown_dialog(
@@ -26,7 +27,9 @@ def show_countdown_dialog(
     sound_alert: bool = True,
     title_text: str = "Tidak Ada Aktivitas Terdeteksi",
     subtitle_text: str = "Laptop akan otomatis menutup aplikasi & shutdown dalam:",
-    icon_text: str = "💤"
+    icon_text: str = "💤",
+    require_explicit_confirmation: bool = False,
+    abort_check=lambda: False, progress=lambda remaining: None, idle_provider=get_idle_seconds
 ) -> str:
     """
     Shows a fullscreen-dim or centered topmost dark-mode dialog.
@@ -43,7 +46,8 @@ def show_countdown_dialog(
             pass
 
     result = {"action": "cancelled"}
-    initial_idle_time = get_idle_seconds()
+    initial_idle_time = idle_provider()
+    opened_at = time.monotonic()
 
     root = tk.Tk()
     root.title("urWatchdog - Konfirmasi Shutdown")
@@ -144,7 +148,7 @@ def show_countdown_dialog(
         activeforeground="#ffffff",
         font=("Segoe UI", 9)
     )
-    chk_vision.pack(pady=(0, 12))
+    # Camera consent is managed only from the control panel.
 
     # Action buttons
     btn_frame = tk.Frame(inner_frame, bg="#18181b")
@@ -208,13 +212,15 @@ def show_countdown_dialog(
 
     def tick():
         # Check if user interacted with Windows globally
-        current_idle = get_idle_seconds()
-        if current_idle < 1.0:  # Fresh user interaction happened!
+        current_idle = idle_provider()
+        if abort_check() or current_idle + 0.15 < initial_idle_time + time.monotonic() - opened_at:
             result["action"] = "cancelled"
             root.destroy()
             return
 
-        time_left[0] -= 1
+        import math
+        time_left[0] = max(0, math.ceil(countdown_seconds - (time.monotonic()-opened_at)))
+        progress(time_left[0])
         countdown_var.set(str(time_left[0]))
 
         # Alert beep every 20 seconds
@@ -222,13 +228,16 @@ def show_countdown_dialog(
             play_chime()
 
         if time_left[0] <= 0:
-            result["action"] = "shutdown"
+            result["action"] = "cancelled" if require_explicit_confirmation else "shutdown"
             root.destroy()
             return
 
-        root.after(1000, tick)
+        root.after(200, tick)
 
-    root.after(1000, tick)
+    root.update_idletasks()
+    root.deiconify()
+    root.lift()
+    root.after(200, tick)
     root.mainloop()
 
     return result["action"]
